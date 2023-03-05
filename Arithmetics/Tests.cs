@@ -10,6 +10,7 @@ namespace ArithmeticsTests
             AssertExpression("( 2 + 3 )", 5);
             AssertExpression("( 2 * 3 )", 6);
             AssertExpression("( 2 - 3 )", -1);
+            AssertExpression("( 6 / 3 )", 2);
         }
 
         private static void AssertExpression(string expr, int value)

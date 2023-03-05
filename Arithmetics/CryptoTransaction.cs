@@ -2,7 +2,7 @@
 
 internal class CryptoTransaction
 {
-    private readonly char[] _operators = new char[] { '+', '-', '*' };
+    private readonly char[] _operators = new char[] { '+', '-', '*', '/' };
     private readonly string _expression;
 
     public int Result => ProcessExpression();
@@ -28,13 +28,18 @@ internal class CryptoTransaction
             }
         }
 
-        if (@operator == '+')
-            return leftOperand + rightOperand;
-        else if (@operator == '-')
+        return EvaluateOperation(leftOperand, rightOperand, @operator);
+    }
+
+    private static int EvaluateOperation(int leftOperand, int rightOperand, char @operator)
+    {
+        if (@operator == '-')
             return leftOperand - rightOperand;
         else if (@operator == '*')
             return leftOperand * rightOperand;
+        else if (@operator == '/')
+            return leftOperand / rightOperand;
         else
-            return 0;
+            return leftOperand + rightOperand;
     }
 }
