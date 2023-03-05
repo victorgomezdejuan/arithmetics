@@ -2,6 +2,7 @@
 
 internal class CryptoTransaction
 {
+    private readonly char[] _operators = new char[] { '+', '*' };
     private readonly string _expression;
 
     public int Result => ProcessExpression();
@@ -11,20 +12,27 @@ internal class CryptoTransaction
 
     private int ProcessExpression()
     {
-        int? leftOperand = null;
-        int? rightOperand = null;
+        int leftOperand = 0;
+        int rightOperand = 0;
+        char? @operator = null;
 
         for (int i = 0; i < _expression.Length; i++) {
             if (char.IsDigit(_expression[i])) {
-                if (leftOperand is null) {
+                if (@operator is null)
                     leftOperand = int.Parse(_expression[i].ToString());
-                }
-                else {
+                else
                     rightOperand = int.Parse(_expression[i].ToString());
-                }
+            }
+            else if (_operators.Contains(_expression[i])) {
+                @operator = _expression[i];
             }
         }
 
-        return leftOperand.HasValue ? leftOperand.Value + rightOperand.Value : 0;
+        if (@operator is null)
+            return 0;
+        else if (@operator == '+')
+            return leftOperand + rightOperand;
+        else
+            return leftOperand * rightOperand;
     }
 }
