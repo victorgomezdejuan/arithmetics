@@ -9,13 +9,8 @@ internal static class CryptoTransaction
         if (Regex.IsMatch(expression, @"^\s*\d\s*$"))
             return int.Parse(expression);
 
-        if (Regex.IsMatch(expression, @"^\s*\(.+\)\s*$")) {
-            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\((.+)\)\s*$");
-            return Process(nestedExpression[0].Groups[1].Value);
-        }
-
-        if (Regex.IsMatch(expression, @"^\s*\d\s*[\+|\-|\*|\/]\s*\d\s*$")) {
-            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*(\d)\s*([\+|\-|\*|\/])\s*(\d)\s*$");
+        if (Regex.IsMatch(expression, @"^\s*\(\s*\d\s*[\+|\-|\*|\/]\s*\d\s*\)\s*$")) {
+            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\(\s*(\d)\s*([\+|\-|\*|\/])\s*(\d)\s*\)\s*$");
             int leftOperand = int.Parse(nestedExpression[0].Groups[1].Value);
             char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
             int rightOperand = int.Parse(nestedExpression[0].Groups[3].Value);
@@ -23,8 +18,8 @@ internal static class CryptoTransaction
             return EvaluateOperation(leftOperand, rightOperand, @operator);
         }
 
-        if (Regex.IsMatch(expression, @"^.+?[\+|\-|\*|\/].+$")) {
-            MatchCollection nestedExpression = Regex.Matches(expression, @"^(.+?)([\+|\-|\*|\/])(.+)$");
+        if (Regex.IsMatch(expression, @"^\s*\(.+?[\+|\-|\*|\/].+\)\s*$")) {
+            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\((.+?)([\+|\-|\*|\/])(.+)\)\s*$");
             int leftOperand = Process(nestedExpression[0].Groups[1].Value);
             char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
             int rightOperand = Process(nestedExpression[0].Groups[3].Value);
