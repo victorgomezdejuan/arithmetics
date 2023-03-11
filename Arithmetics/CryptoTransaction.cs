@@ -1,34 +1,38 @@
-﻿namespace ArithmeticsTests;
+﻿using System.Text.RegularExpressions;
 
-internal class CryptoTransaction
+namespace ArithmeticsTests;
+
+internal static class CryptoTransaction
 {
-    private readonly char[] _operators = new char[] { '+', '-', '*', '/' };
-    private readonly string _expression;
-
-    public int Result => ProcessExpression();
-
-    public CryptoTransaction(string expression)
-        => _expression = expression;
-
-    private int ProcessExpression()
+    public static int Process(string expression)
     {
-        int leftOperand = 0;
-        int rightOperand = 0;
-        char @operator = ' ';
+        if (Regex.IsMatch(expression, @"^\s*\d\s*$"))
+            return int.Parse(expression);
 
-        for (int i = 0; i < _expression.Length; i++) {
-            if (char.IsDigit(_expression[i])) {
-                if (@operator == ' ')
-                    leftOperand = int.Parse(_expression[i].ToString());
-                else
-                    rightOperand = int.Parse(_expression[i].ToString());
-            }
-            else if (_operators.Contains(_expression[i])) {
-                @operator = _expression[i];
-            }
+        if (Regex.IsMatch(expression, @"^\s*\(.+\)\s*$")) {
+            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\((.+)\)\s*$");
+            return Process(nestedExpression[0].Groups[1].Value);
         }
 
-        return EvaluateOperation(leftOperand, rightOperand, @operator);
+        if (Regex.IsMatch(expression, @"^\s*\d\s*[\+|\-|\*|\/]\s*\d\s*$")) {
+            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*(\d)\s*([\+|\-|\*|\/])\s*(\d)\s*$");
+            int leftOperand = int.Parse(nestedExpression[0].Groups[1].Value);
+            char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
+            int rightOperand = int.Parse(nestedExpression[0].Groups[3].Value);
+
+            return EvaluateOperation(leftOperand, rightOperand, @operator);
+        }
+
+        if (Regex.IsMatch(expression, @"^.+?[\+|\-|\*|\/].+$")) {
+            MatchCollection nestedExpression = Regex.Matches(expression, @"^(.+?)([\+|\-|\*|\/])(.+)$");
+            int leftOperand = Process(nestedExpression[0].Groups[1].Value);
+            char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
+            int rightOperand = Process(nestedExpression[0].Groups[3].Value);
+
+            return EvaluateOperation(leftOperand, rightOperand, @operator);
+        }
+
+        return 0;
     }
 
     private static int EvaluateOperation(int leftOperand, int rightOperand, char @operator)
