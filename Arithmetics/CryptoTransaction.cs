@@ -6,23 +6,16 @@ internal static class CryptoTransaction
 {
     public static int Process(string expression)
     {
-        if (Regex.IsMatch(expression, @"^\s*\d\s*$"))
-            return int.Parse(expression);
+        expression = expression.Trim();
 
-        if (Regex.IsMatch(expression, @"^\s*\(\s*\d\s*[\+|\-|\*|\/]\s*\d\s*\)\s*$")) {
-            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\(\s*(\d)\s*([\+|\-|\*|\/])\s*(\d)\s*\)\s*$");
-            int leftOperand = int.Parse(nestedExpression[0].Groups[1].Value);
-            char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
-            int rightOperand = int.Parse(nestedExpression[0].Groups[3].Value);
+        if (expression.Length.Equals(1) && char.IsDigit(expression[0]))
+            return int.Parse(expression[..1]);
 
-            return EvaluateOperation(leftOperand, rightOperand, @operator);
-        }
-
-        if (Regex.IsMatch(expression, @"^\s*\(.+?[\+|\-|\*|\/].+\)\s*$")) {
-            MatchCollection nestedExpression = Regex.Matches(expression, @"^\s*\((.+?)([\+|\-|\*|\/])(.+)\)\s*$");
-            int leftOperand = Process(nestedExpression[0].Groups[1].Value);
-            char @operator = nestedExpression[0].Groups[2].Value.Trim()[0];
-            int rightOperand = Process(nestedExpression[0].Groups[3].Value);
+        if (Regex.IsMatch(expression, @"^\(\s*(\d|\(.+\))\s*(\+|\-|\*|\/)\s*(\d|\(.+\))\s*\)$")) {
+            MatchCollection matchCollection = Regex.Matches(expression, @"^\(\s*(\d|\(.+\))\s*(\+|\-|\*|\/)\s*(\d|\(.+\))\s*\)$");
+            int leftOperand = Process(matchCollection[0].Groups[1].Value);
+            char @operator = matchCollection[0].Groups[2].Value[0];
+            int rightOperand = Process(matchCollection[0].Groups[3].Value);
 
             return EvaluateOperation(leftOperand, rightOperand, @operator);
         }
