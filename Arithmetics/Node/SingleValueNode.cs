@@ -6,5 +6,5 @@ internal class SingleValueNode : INode
 
     public double Value { get; }
 
-    public double GetValue() => Value;
+    public double CalculateValue() => Value;
 }

@@ -2,5 +2,5 @@
 
 internal interface INode
 {
-    double GetValue();
+    double CalculateValue();
 }

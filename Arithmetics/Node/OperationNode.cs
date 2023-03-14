@@ -27,25 +27,34 @@ internal class OperationNode : INode
 
     public List<Operation> Operations { get; }
 
-    public double GetValue()
+    public double CalculateValue()
     {
-        int nextOperationIndex = 0;
-
         while (Operations.Count > 0) {
-            for (int i = 1; i < Operations.Count; i++) {
-                if (Preferences[Operations[i]] > Preferences[Operations[nextOperationIndex]])
-                    nextOperationIndex = i;
-            }
-            double leftOperand = Elements[nextOperationIndex * 2].GetValue();
-            double rightOperand = Elements[nextOperationIndex * 2 + 1].GetValue();
+            int nextOperationIndex = NextOperationIndexByPriority();
+
+            double leftOperand = Elements[nextOperationIndex].CalculateValue();
+            double rightOperand = Elements[nextOperationIndex + 1].CalculateValue();
             Operation operation = Operations[nextOperationIndex];
+
             double result = ExecuteOperation(leftOperand, rightOperand, operation);
+
             Operations.RemoveAt(nextOperationIndex);
-            Elements.RemoveRange(nextOperationIndex * 2, 2);
-            Elements.Insert(nextOperationIndex * 2, new SingleValueNode(result));
+            Elements.RemoveRange(nextOperationIndex, 2);
+            Elements.Insert(nextOperationIndex, new SingleValueNode(result));
         }
 
-        return Elements.Count > 0 ? Elements[0].GetValue() : 0;
+        return Elements[0].CalculateValue();
+    }
+
+    private int NextOperationIndexByPriority()
+    {
+        int nextOperationIndex = 0;
+        for (int i = 1; i < Operations.Count; i++) {
+            if (Preferences[Operations[i]] > Preferences[Operations[nextOperationIndex]])
+                nextOperationIndex = i;
+        }
+
+        return nextOperationIndex;
     }
 
     private static double ExecuteOperation(double leftOperand, double rightOperand, Operation operation)
