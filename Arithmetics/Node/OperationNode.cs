@@ -41,8 +41,7 @@ internal class OperationNode : INode
             Operation operation = Operations[nextOperationIndex];
             double result = ExecuteOperation(leftOperand, rightOperand, operation);
             Operations.RemoveAt(nextOperationIndex);
-            Elements.RemoveAt(nextOperationIndex * 2);
-            Elements.RemoveAt(nextOperationIndex * 2 + 1);
+            Elements.RemoveRange(nextOperationIndex * 2, 2);
             Elements.Insert(nextOperationIndex * 2, new SingleValueNode(result));
         }
 
