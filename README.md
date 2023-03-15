@@ -20,5 +20,7 @@ The transactions are arithmetic operations wrapped by parentheses. In case a rec
 
 ## Confession
 I found it impossible to came up with the final algorithm using pure TDD. I got stuck many (I mean MANY!! :-)) times before I wrote a solution that could cover all the test cases. I'm not proud of the final code in terms on simplicity and readiness, but this was what I achieved so far.
+
 I uploaded it not to show off, as there is no reason to do so (the algorithm is quite ugly and pretty complex to follow), but to provide someone with a solution to this kata, as I did not found any other one on the Internet.
+
 In conclusion, what I practiced, in reality, was perserance and stuborness.
