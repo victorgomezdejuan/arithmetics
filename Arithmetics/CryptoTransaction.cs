@@ -50,27 +50,27 @@ internal static class CryptoTransaction
     private static Result ProcessSameLevelOperations(string expression, INode leftOperand)
     {
         string currentExpr = expression;
-        char opChar = currentExpr[0];
-        Operation operation = ParseOperation(opChar);
         OperationNode operationNode = new();
         operationNode.Elements.Add(leftOperand);
+
+        while (AreThereOperationAtTheSameLevel(currentExpr))
+            currentExpr = AddSameLevelRemainingOperationsToNode(currentExpr, operationNode);
+
+        return new Result(operationNode, currentExpr);
+    }
+
+    private static string AddSameLevelRemainingOperationsToNode(string expression, OperationNode operationNode)
+    {
+        string currentExpr = expression;
+        char opChar = currentExpr[0];
+        Operation operation = ParseOperation(opChar);
         currentExpr = currentExpr[1..];
         Result nextOperandProcessResult = ProcessNextItem(currentExpr);
         currentExpr = nextOperandProcessResult.RemainingExpression.Trim();
         operationNode.Operations.Add(operation);
         operationNode.Elements.Add(nextOperandProcessResult.ProcessedNode);
 
-        while (AreThereOperationAtTheSameLevel(currentExpr)) {
-            char nextOpChar = currentExpr[0];
-            Operation nextOperation = ParseOperation(nextOpChar);
-            currentExpr = currentExpr[1..];
-            Result nextOperandProcessResult2 = ProcessNextItem(currentExpr);
-            currentExpr = nextOperandProcessResult2.RemainingExpression.Trim();
-            operationNode.Operations.Add(nextOperation);
-            operationNode.Elements.Add(nextOperandProcessResult2.ProcessedNode);
-        }
-
-        return new Result(operationNode, currentExpr);
+        return currentExpr;
     }
 
     private static bool AreThereOperationAtTheSameLevel(string currentExpr) => Regex.IsMatch(currentExpr, OperationRegex);
